@@ -1,0 +1,4 @@
+outs:
+- md5: 85846fd318c914a8c51a8eb5eeb488ad
+  size: 4213488
+  path: text_emotion.csv

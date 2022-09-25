@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+ name: twitteranalysis-deployment
+ labels:
+   app: twitteranalysis
+
+spec: 
+  selector: 
+    run: twitteranalysis
+
+  ports: 
+    - port: 8501
+  type: LoadBalancer 

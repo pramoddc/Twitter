@@ -1,0 +1,57 @@
+stages:
+  prepare:
+    cmd: python src/prepare.py data/preprocessed
+    deps:
+    # - data/raw/text_emotion.csv
+    - src/prepare.py
+    params:
+    - prepare.split
+    - prepare.seed
+    outs:
+    - data/preprocessed
+  featurize:
+    cmd: python src/featurization.py data/preprocessed data/features
+    deps:
+    - data/preprocessed
+    - src/featurization.py
+    params:
+    - featurize.ngrams
+    - featurize.max_features
+    outs:
+    - data/features
+  train:
+    cmd: python src/train.py data/features polarityclassifier.pkl
+    deps:
+    - data/features
+    - src/train.py
+    params:
+    - train.seed
+    - train.n_est
+    - train.min_split
+    outs:
+    - polarityclassifier.pkl
+    - sentimentclassifier.pkl
+  evaluate:
+     cmd: python src/evaluate.py polarityclassifier.pkl data/features
+     deps:
+       - sentimentclassifier.pkl
+       - polarityclassifier.pkl
+       - src/evaluate.py
+       - data/features
+    #  metrics:
+    #     - evaluation.json:
+    #         cache: false
+     plots:
+       - evaluation/test/plots/polarity_roc_curve.png
+       - evaluation/test/plots/polarity_precision_recall.json
+       - evaluation/test/plots/sentiment_roc_curve.png
+       - evaluation/test/plots/sentiment_precision_recall.json  
+      #- evaluation/plots/polarity_roc.json
+  predict:
+    cmd: python src/streamingdata.py data/preprocessed/scope.csv
+    deps: 
+     - src/streamingdata.py
+     - src/cleanscopedata.py
+    # outs:
+    #  - predictions/prediction.csv
+    

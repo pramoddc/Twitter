@@ -1,0 +1,96 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python src/prepare.py data/preprocessed
+    deps:
+    - path: src/prepare.py
+      md5: 17ae9e58c538eab0e6e3ab96ef81cde9
+      size: 5759
+    params:
+      params.yaml:
+        prepare.seed: 20170428
+        prepare.split: 0.3
+    outs:
+    - path: data/preprocessed
+      md5: 381cae7845cba42149122feb110f48aa.dir
+      size: 2970773
+      nfiles: 1
+  featurize:
+    cmd: python src/featurization.py data/preprocessed data/features
+    deps:
+    - path: data/preprocessed
+      md5: 381cae7845cba42149122feb110f48aa.dir
+      size: 2970773
+      nfiles: 1
+    - path: src/featurization.py
+      md5: bb843f9752e3cd481285ac1a094cde51
+      size: 5178
+    params:
+      params.yaml:
+        featurize.max_features: 400
+        featurize.ngrams: 1
+    outs:
+    - path: data/features
+      md5: dec3bb8d5002f3bf34a24143671b7ba6.dir
+      size: 125903805
+      nfiles: 2
+  train:
+    cmd: python src/train.py data/features polarityclassifier.pkl
+    deps:
+    - path: data/features
+      md5: dec3bb8d5002f3bf34a24143671b7ba6.dir
+      size: 125903805
+      nfiles: 2
+    - path: src/train.py
+      md5: 42da2f4c23a6b97274f40da0666155d2
+      size: 3124
+    params:
+      params.yaml:
+        train.min_split: 3
+        train.n_est: 30
+        train.seed: 20170428
+    outs:
+    - path: polarityclassifier.pkl
+      md5: 19518a801ba491edd31cde714d4f08fe
+      size: 23123
+    - path: sentimentclassifier.pkl
+      md5: 89c55dd768693727c3dfc9dc9dd63369
+      size: 81264
+  evaluate:
+    cmd: python src/evaluate.py polarityclassifier.pkl data/features
+    deps:
+    - path: data/features
+      md5: dec3bb8d5002f3bf34a24143671b7ba6.dir
+      size: 125903805
+      nfiles: 2
+    - path: polarityclassifier.pkl
+      md5: 19518a801ba491edd31cde714d4f08fe
+      size: 23123
+    - path: sentimentclassifier.pkl
+      md5: 89c55dd768693727c3dfc9dc9dd63369
+      size: 81264
+    - path: src/evaluate.py
+      md5: 7acacccba6141e173c517a26ac2eddbb
+      size: 8156
+    outs:
+    - path: evaluation/test/plots/polarity_precision_recall.json
+      md5: caaa36b9d5ae12cf79f645b3d981287c
+      size: 324
+    - path: evaluation/test/plots/polarity_roc_curve.png
+      md5: aa7e61ac126895092ed7f0249b044710
+      size: 52998
+    - path: evaluation/test/plots/sentiment_precision_recall.json
+      md5: 00cb8775dd1112ebc246e6d46a1c57f7
+      size: 1239
+    - path: evaluation/test/plots/sentiment_roc_curve.png
+      md5: 3115d9cced8c819b2d3a8e6d02be53b7
+      size: 113558
+  predict:
+    cmd: python src/streamingdata.py data/preprocessed/scope.csv
+    deps:
+    - path: src/cleanscopedata.py
+      md5: 058a760dec920df0cc17c42c7c9dd6a1
+      size: 6143
+    - path: src/streamingdata.py
+      md5: 8ec94b1f6840b0bfc271b6b4c0bec8b4
+      size: 2692
