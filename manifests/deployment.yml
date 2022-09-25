@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "aks-f4fc"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "aks-f4fc"
+  template:
+    metadata:
+      labels:
+        app: "aks-f4fc"
+    spec:
+      containers:
+        - name: "aks-f4fc"
+          image: "pramoddc.azurecr.io/aks"
+          ports:
+          - containerPort: 8501
