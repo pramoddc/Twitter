@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "aks-4a06"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "aks-4a06"
+  template:
+    metadata:
+      labels:
+        app: "aks-4a06"
+    spec:
+      containers:
+        - name: "aks-4a06"
+          image: "pramoddc.azurecr.io/aks"
+          ports:
+          - containerPort: 8501
