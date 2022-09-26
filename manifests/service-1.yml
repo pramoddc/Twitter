@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: "aks-4a06"
+    labels:
+        app: "aks-4a06"
+spec:
+    type: ClusterIP
+    ports:
+    - port: 8501
+      targetPort: 8501
+      protocol: TCP
+      name: http
+    selector:
+        app: "aks-4a06"
