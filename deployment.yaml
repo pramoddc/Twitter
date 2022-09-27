@@ -2,9 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 
 metadata:
- name: twitteranalysis-deployment
- labels:
-   app: twitteranalysis
+  name: twitteranalysis-deployment
 
 spec:
   replicas: 3
@@ -21,6 +19,20 @@ spec:
     spec:
       containers:
         - name: bdp2-twitteranalysis
-          image: pramoddc.azurecr.io/bdp2-twitteranalysis:V1.0
+          image: pramoddc.azurecr.io/bdp2-twitteranalysis:v14
           ports:
           - containerPort: 8501
+          
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: twitteranalysis-service
+spec:
+  selector:
+    run: twitteranalysis
+  ports:
+    - protocol: TCP
+      port: 9997
+      targetPort: 8501
+  type: LoadBalancer
